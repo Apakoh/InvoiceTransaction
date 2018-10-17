@@ -98,13 +98,18 @@ public class DAO {
                 for (int i = 0; i < productIDs.length; i++) {
                     pID = productIDs[i];
                     pquantite = quantities[i];
-                    // Définir la valeur des paramètres
-                    stmt2.setInt(1, cle);
-                    stmt2.setInt(2, i);
-                    stmt2.setInt(3, pID);
-                    stmt2.setInt(4, pquantite);
-                    stmt2.setInt(5, productPrice(pID));
-                    stmt2.executeUpdate();
+                    if (pquantite >= 0){ 
+                        // Définir la valeur des paramètres
+                        stmt2.setInt(1, cle);
+                        stmt2.setInt(2, i);
+                        stmt2.setInt(3, pID);
+                        stmt2.setInt(4, pquantite);
+                        stmt2.setInt(5, productPrice(pID));
+                        stmt2.executeUpdate();
+                    } else
+                    {
+                         connection.rollback();
+                    }
                 }
             }
 

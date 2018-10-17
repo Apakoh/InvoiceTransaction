@@ -93,7 +93,48 @@ public class TransactionTest {
 
 		assertEquals(before + 2f * 10f, after, 0.001f);		
 	}
-	
+        
+	@Test
+	public void prixCorrect() throws Exception {
+		// On calcule le chiffre d'aafaire du client
+		int id = myCustomer.getCustomerId();
+		// Un tableau de 1 productID
+		int[] productIds = new int[]{0}; // Le produit 0 vaut 10 €
+		// Un tableau de 1 quantites
+		int[] quantities = new int[]{1};
+		// On exécute la transaction
+		myDAO.createInvoice(myCustomer, productIds, quantities);                
+		float prixProduct = myDAO.productPrice(0);
+		float prixItem = myDAO.totalForCustomer(id);
+
+		assertEquals(prixProduct, prixItem, 0.001f);		
+	}
+        
+        @Test
+        // Quantité renseignée négative
+	public void negativeQuantity() throws Exception {
+		int id = myCustomer.getCustomerId();
+		// Un tableau de 1 productID
+		int[] productIds = new int[]{0}; // Le produit 0 vaut 10 €
+		// Un tableau de 1 quantites
+		int[] quantities = new int[]{-1};
+		// On exécute la transaction
+		myDAO.createInvoice(myCustomer, productIds, quantities);
+                float prixItem = myDAO.totalForCustomer(id);
+                assertEquals("bug =(", 0, prixItem, 0.001f);
+	}
+        
+         @Test(expected = Exception.class)
+        // ID Produit incorrect
+	public void productIDUnknown() throws Exception {
+		int id = myCustomer.getCustomerId();
+		// Un tableau de 1 productID
+		int[] productIds = new int[]{4}; // Le produit 0 vaut 10 €
+		// Un tableau de 1 quantites
+		int[] quantities = new int[]{1};
+		// On exécute la transaction
+		myDAO.createInvoice(myCustomer, productIds, quantities);
+	}
 
 	
 	public static DataSource getDataSource() throws SQLException {
